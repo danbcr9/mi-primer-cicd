@@ -1,0 +1,38 @@
+name: Mi Primer Pipeline CI/CD
+
+# 1. ¿CUÁNDO SE EJECUTA? (Triggers)
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+# 2. TRABAJOS A EJECUTAR (Jobs)
+jobs:
+  # --- TRABAJO 1: CI (Integración Continua) ---
+  integracion-continua:
+    runs-on: ubuntu-latest # La máquina virtual efímera donde correrá esto
+
+    steps:
+      # Paso A: Clonar tu código en la máquina virtual
+      - name: Descargar código del repositorio
+        uses: actions/checkout@v4
+
+      # Paso B: Configurar el entorno (ej: Node.js)
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # Paso C: Ejecutar tus pruebas
+      - name: Ejecutar pruebas unitarias
+        run: node app.test.js
+
+  # --- TRABAJO 2: CD (Despliegue Continuo) ---
+  despliegue-continuo:
+    needs: integracion-continua # Solo se ejecuta si la CI pasó con éxito
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Simular Despliegue a Producción
+        run: echo "¡Pruebas exitosas! Desplegando versión a producción..."
